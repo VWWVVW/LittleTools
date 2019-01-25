@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class ClassVisualExplorer{
-    private ClassExplorer ce=new ClassExplorer(new Image());
+    private ClassExplorer ce=new ClassExplorer(new JPanel());
     private JFrame frm=new JFrame(ce.getName());
     private JButton btn=new JButton("Search");
     private JTextField txt=new JTextField("Type the key words");
@@ -133,9 +133,17 @@ public class ClassVisualExplorer{
         }
     }
 
-    private static void setLookAndFeel(){
-        setLookAndFeel(UIManager
-            .getSystemLookAndFeelClassName());
+    public static void setLookAndFeel(){
+        String str,name;
+        name=UIManager.getSystemLookAndFeelClassName();
+        for(UIManager.LookAndFeelInfo i
+            :UIManager.getInstalledLookAndFeels()){
+            str=i.toString();
+            if(str.indexOf("gtk")!=-1)
+                name=str.substring(str.lastIndexOf(" ")+1,
+                    str.length()-1);
+        }
+        setLookAndFeel(name);
     }
 
     private static final GridBagConstraints getGBC(int x,
