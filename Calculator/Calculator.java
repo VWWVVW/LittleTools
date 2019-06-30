@@ -7,8 +7,8 @@ public class Calculator{
     public ArrayList<SegInf> segInf;
 
     public static void main(String[] args){
-        Calculator c=new Calculator("(1+1)+(2+(3*2)/(2-3*(1+1)+2))");
-        c.setSegInf();
+        Calculator c=new Calculator("(1+2)/((3-4)*5/6)");
+        c.decode();
         c.printSegInf();
     }
 
@@ -20,7 +20,7 @@ public class Calculator{
         this.expression=expression;
     }
 
-    public void setSegInf(){
+    public void decode(){
         getParen();
         setParenId();
         getNum();
@@ -40,6 +40,12 @@ public class Calculator{
 
     public void setParenId(){
         int sum,index,i;
+        boolean hasParen=false;
+        for(SegInf s:segInf)
+            if(s.type==0)
+                hasParen=true;
+        if(!hasParen)
+            return;
         for(int id=1;chkId()<=0;id++){
             sum=0;
             index=-1;
@@ -68,13 +74,14 @@ public class Calculator{
         String[] exp=expression.split(sep);
         for(String s:exp)
             System.out.println(s);
-        /*int i=-1;
+        int i=-1;
         for(String s:exp){
             i++;
             if(s.equals(""))
                 continue;
-            segInf.add(i,new SegInf());
-        }*/
+            segInf.add(i++,new SegInf((byte)8,
+                (float)Float.parseFloat(s)));
+        }
     }
 
     public int chkId(){
@@ -88,21 +95,32 @@ public class Calculator{
         }
         return isDone?max:(-max);
     }
-
-    public void printSegInf(){
-        System.out.print("\nType:");
-        for(int i=0;i<segInf.size();i++)
-            System.out.print(segInf.get(i).type+" ");
-        System.out.print("\nId  :");
-        for(int i=0;i<segInf.size();i++)
-            System.out.print(segInf.get(i).id+" ");
+    //Only be used to debug
+    protected void printSegInf(){
+        String str;
+        System.out.print("\nExp   :");
+        for(SegInf s:segInf){
+            str=Float.toString(s.value);
+            if(s.type<8)
+                str=Character.toString(types[s.type]);
+            System.out.print(str+"\t");
+        }
+        System.out.print("\nType  :");
+        for(SegInf s:segInf)
+            System.out.print(s.type+"\t");
+        System.out.print("\nId    :");
+        for(SegInf s:segInf)
+            System.out.print(s.id+"\t");
+        System.out.print("\nValue :");
+        for(SegInf s:segInf)
+            System.out.print(s.value+"\t");
         System.out.print("\n");
     }
 }
 
 class SegInf{
     public byte type;
-    public float value;
+    public float value=0;
     public int id=0;
 
     public SegInf(byte type,int id){
